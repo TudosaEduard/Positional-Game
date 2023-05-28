@@ -42,6 +42,13 @@ public class Register extends JDialog{
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 Login login = new Login(null);
+                User user = login.user;
+
+                if(user != null){
+                    System.out.println("Successfully logged in of: " + user.getUsername() + " !");
+                } else {
+                    System.out.println("Login canceled!");
+                }
             }
         });
 
@@ -60,12 +67,9 @@ public class Register extends JDialog{
         } else if (!password1.equals(password2)) {
             JOptionPane.showMessageDialog(this, "Passwords do not match!", "Try again", JOptionPane.ERROR_MESSAGE);
         } else {
-            DAOConnection.createConnection();
             user = addNewUserToDatabase(username, password1, email);
-
             if(user != null){
                 dispose();
-                DAOConnection.closeConnection();
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to create a new user! Username, email or password are invalid!", "Try again", JOptionPane.ERROR_MESSAGE);
             }

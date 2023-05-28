@@ -63,7 +63,6 @@ public class Login extends JDialog{
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all the fields!", "Try again", JOptionPane.ERROR_MESSAGE);
         } else {
-            DAOConnection.createConnection();
             user = getAuthenticatedUser(username, password);
 
             if(user != null){
@@ -87,8 +86,7 @@ public class Login extends JDialog{
         } else if(usersConnection.checkLoginByEmail(username, password)) {
             user = new User(usersConnection.getUsernameByEmail(username), password, username);
         } else {
-            return null;
-        }
+            return null;}
 
         return user;
     }

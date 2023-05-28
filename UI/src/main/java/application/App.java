@@ -1,5 +1,6 @@
 package application;
 
+import dao.DAOConnection;
 import gui.login.Login;
 import gui.register.Register;
 
@@ -11,6 +12,7 @@ public class App
 {
     public static void main( String[] args )
     {
+        DAOConnection.createConnection();
         Login login = new Login(null);
         User user = login.user;
 
