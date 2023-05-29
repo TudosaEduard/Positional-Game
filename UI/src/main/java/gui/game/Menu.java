@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Menu extends JDialog{
+public class Menu extends JFrame{
     private JButton playButton;
     private JButton scoreboardButton;
     private JButton settingsButton;
@@ -13,11 +13,12 @@ public class Menu extends JDialog{
     private JPanel menuPanel;
 
     public Menu(JFrame frame) {
-        super(frame, "Menu Positional Game", true);
+        super();
+        setTitle("Menu Positional Game");
         setContentPane(menuPanel);
         setMinimumSize(new Dimension(700, 700));
         setLocationRelativeTo(frame);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         playButton.addActionListener(new ActionListener() {
             @Override
@@ -48,7 +49,7 @@ public class Menu extends JDialog{
         setVisible(true);
     }
 
-//    public static void main(String[] args) {
-//        Game game = new Game(null);
-//    }
+    public static void main(String[] args) {
+        Game game = new Game(null);
+    }
 }

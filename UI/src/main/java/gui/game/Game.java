@@ -7,25 +7,26 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-public class Game extends JDialog {
+public class Game extends JFrame {
     private JPanel gamePanel;
     private JPanel scoreGame;
-    private JLabel playerRound;
+    public JLabel playerRound;
     private JLabel scorePlayer;
     private JPanel drawGame;
     private Board board;
 
     public Game(JFrame frame) {
-        super(frame, "Positional Game", true);
+        super();
+        setTitle("Positional Game");
         setContentPane(gamePanel);
         setMinimumSize(new Dimension(900, 900));
         setLocationRelativeTo(frame);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         scoreGame.setMinimumSize(new Dimension(900, 100));
         drawGame.setMinimumSize(new Dimension(900, 800));
 
-        board = new Board(8, 900, 800, 0.5);
+        board = new Board(this,8, 900, 800, 0.3);
         drawGame.setLayout(new BorderLayout());
         drawGame.add(board, BorderLayout.CENTER);
         drawGame.setBackground(new Color(255, 236, 194));

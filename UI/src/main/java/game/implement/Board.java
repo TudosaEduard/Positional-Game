@@ -3,14 +3,17 @@ package game.implement;
 import game.components.Edge;
 import game.components.Node;
 import game.components.Vertex;
+import gui.game.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Board extends JPanel {
 
+    private Game game;
     private int W, H;
     private int numVertices;
     private double probability;
@@ -21,8 +24,12 @@ public class Board extends JPanel {
     List <Edge> edges;
     private List<Vertex> vertices = new ArrayList<>();
     private int[] x, y;
+    Graphics2D graphics;
+    BufferedImage image;
+    int playerTurn = 1;
 
-    public Board(int numVertices, int W, int H, double probability) {
+    public Board(Game game, int numVertices, int W, int H, double probability) {
+        this.game = game;
         this.numVertices = numVertices;
         this.probability = probability;
         this.W = W;
@@ -32,6 +39,13 @@ public class Board extends JPanel {
     }
 
     public void createBoard(){
+        createOffscreenImage();
+        createNodes(numVertices);
+        createEdges(numVertices, probability);
+        createVertices();
+        drawLines();
+        drawVertices();
+        selectNodes();
         repaint();
     }
 
@@ -71,24 +85,22 @@ public class Board extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        createOffscreenImage(g);
-        createNodes(numVertices);
-        createEdges(numVertices, probability);
-        createVertices();
-        drawLines(g);
-        drawVertices(g);
+    protected void paintComponent(Graphics graphics) {
+        graphics.drawImage(image, 0, 0, this);
     }
 
-    private void createOffscreenImage(Graphics g) {
-        g.setColor(new Color(255, 236, 194));
-        g.fillRect(0, 0, W, H);
+    private void createOffscreenImage() {
+        image = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
+        graphics = image.createGraphics();
+        graphics.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setColor(new Color(255, 236, 194));
+        graphics.fillRect(0, 0, W, H);
     }
 
-    private void drawLines(Graphics g) {
+    private void drawLines() {
         for (Edge e : edges) {
-            g.setColor(Color.BLACK);
+            graphics.setColor(Color.BLACK);
             Node n1 = e.getNode1();
             Node n2 = e.getNode2();
 
@@ -101,16 +113,88 @@ public class Board extends JPanel {
                     v2 = v;
                 }
             }
-            g.drawLine(v1.getX(), v1.getY(), v2.getX(), v2.getY());
+            graphics.drawLine(v1.getX(), v1.getY(), v2.getX(), v2.getY());
         }
     }
 
-    private void drawVertices(Graphics g) {
+    private void drawVertices() {
         for (int i = 0; i < numVertices; i++) {
-            g.setColor(Color.BLACK);
-            g.fillOval(x[i] - 10, y[i] - 10, 20, 20);
-            g.setColor(Color.WHITE);
-            g.fillOval(x[i] - 6, y[i] - 6, 12, 12);
+            graphics.setColor(Color.BLACK);
+            graphics.fillOval(x[i] - 10, y[i] - 10, 20, 20);
+            graphics.setColor(Color.WHITE);
+            graphics.fillOval(x[i] - 6, y[i] - 6, 12, 12);
         }
+    }
+
+    public void selectNodes() {
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                for (Vertex v : vertices) {
+                    if (v.contains(x, y)) {
+                        if (node1 == null) {
+                            node1 = v;
+                            graphics.setColor(Color.GREEN);
+                            graphics.fillOval(v.getX() - 6, v.getY() - 6, 12, 12);
+                            repaint();
+                        } else if (node2 == null && node1 != v && edgeAvailable(node1.getNode(), v.getNode())) {
+                            node2 = v;
+                            graphics.setColor(Color.GREEN);
+                            graphics.fillOval(v.getX() - 6, v.getY() - 6, 12, 12);
+
+                            String color = playerTurn == 1 ? "#ff0000" : "#0000ff";
+                            //modify text for scorePlayer JLabel
+
+                            graphics.setColor(Color.decode(color));
+                            graphics.drawLine(node1.getX(), node1.getY(), node2.getX(), node2.getY());
+                            repaint();
+
+                            edge = node1.getNode().getName() + " " + node2.getNode().getName();
+                            playerTurn = playerTurn == 1 ? 2 : 1;
+
+                            if(playerTurn == 1)
+                            {
+                                game.playerRound.setText("Player 1");
+                            }
+                            else
+                            {
+                                game.playerRound.setText("Player 2");
+                            }
+
+                        } else {
+
+                            if(node2 == null)
+                            {
+                                graphics.setColor(Color.WHITE);
+                                graphics.fillOval(node1.getX() - 6, node1.getY() - 6, 12, 12);
+                                repaint();
+                                node1 = null;
+                                return;
+                            }
+
+                            graphics.setColor(Color.WHITE);
+                            graphics.fillOval(node1.getX() - 6, node1.getY() - 6, 12, 12);
+                            graphics.fillOval(node2.getX() - 6, node2.getY() - 6, 12, 12);
+                            repaint();
+                            node1 = null;
+                            node2 = null;
+                            return;
+                        }
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    public Boolean edgeAvailable(Node node1, Node node2){
+        for(Edge e : edges){
+            if(e.getNode1().equals(node1) && e.getNode2().equals(node2) || e.getNode1().equals(node2) && e.getNode2().equals(node1))
+                if(e.getColor().equals("black"))
+                    return true;
+        }
+        return false;
     }
 }

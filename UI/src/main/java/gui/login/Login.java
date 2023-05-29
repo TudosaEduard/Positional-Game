@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
-public class Login extends JDialog{
+public class Login extends JFrame{
     private JPanel loginPanel;
     private JPanel welcomePanel;
     private JLabel welcomeText1;
@@ -27,11 +27,13 @@ public class Login extends JDialog{
     private JButton registerNowButton;
 
     public Login(JFrame frame) {
-        super(frame, "Access your account", true);
+        super();
+        setTitle("Access your account");
         setContentPane(loginPanel);
         setMinimumSize(new Dimension(700, 700));
         setLocationRelativeTo(frame);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

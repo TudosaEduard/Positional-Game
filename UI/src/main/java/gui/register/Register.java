@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
-public class Register extends JDialog{
+public class Register extends JFrame{
     private JPanel registerPanel;
     private JTextField usernameRegisterField;
     private JPasswordField passwordRegisterField1;
@@ -26,11 +26,12 @@ public class Register extends JDialog{
     private JButton loginNowButton;
 
     public Register(JFrame frame) {
-        super(frame, "Create a new account", true);
+        super();
+        setTitle("Create a new account");
         setContentPane(registerPanel);
         setMinimumSize(new Dimension(700, 700));
         setLocationRelativeTo(frame);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
