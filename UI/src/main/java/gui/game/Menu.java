@@ -1,9 +1,5 @@
 package gui.game;
 
-import application.User;
-import gui.login.Login;
-import gui.register.Register;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -51,4 +47,8 @@ public class Menu extends JDialog{
 
         setVisible(true);
     }
+
+//    public static void main(String[] args) {
+//        Game game = new Game(null);
+//    }
 }
