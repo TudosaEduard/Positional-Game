@@ -28,7 +28,7 @@ public class Register extends JDialog{
     public Register(JFrame frame) {
         super(frame, "Create a new account", true);
         setContentPane(registerPanel);
-        setMinimumSize(new Dimension(500, 500));
+        setMinimumSize(new Dimension(700, 700));
         setLocationRelativeTo(frame);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         registerButton.addActionListener(new ActionListener() {
@@ -86,8 +86,6 @@ public class Register extends JDialog{
         }
         if(usersConnection.existsUser(username, email)){
             JOptionPane.showMessageDialog(this, "Username or email already exists!", "Try again", JOptionPane.ERROR_MESSAGE);
-            return null;
-        } else if(usersConnection.existsPassword(password)){
             return null;
         } else {
             usersConnection.insertUser(username, password, email);

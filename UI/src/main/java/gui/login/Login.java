@@ -3,6 +3,7 @@ package gui.login;
 import application.User;
 import dao.DAOConnection;
 import dao.DAOUsers;
+import gui.game.Menu;
 import gui.register.Register;
 
 import javax.swing.*;
@@ -28,7 +29,7 @@ public class Login extends JDialog{
     public Login(JFrame frame) {
         super(frame, "Access your account", true);
         setContentPane(loginPanel);
-        setMinimumSize(new Dimension(500, 500));
+        setMinimumSize(new Dimension(700, 700));
         setLocationRelativeTo(frame);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         loginButton.addActionListener(new ActionListener() {
@@ -67,6 +68,7 @@ public class Login extends JDialog{
 
             if(user != null){
                 dispose();
+                Menu menu = new Menu(null);
                 DAOConnection.closeConnection();
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid username(email) or password!", "Try again", JOptionPane.ERROR_MESSAGE);
