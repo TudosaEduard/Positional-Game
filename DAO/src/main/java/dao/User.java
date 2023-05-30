@@ -1,4 +1,4 @@
-package application;
+package dao;
 
 public class User {
     private String username;

@@ -11,7 +11,7 @@ public class Game extends JFrame {
     private JPanel gamePanel;
     private JPanel scoreGame;
     public JLabel playerRound;
-    private JLabel scorePlayer;
+    public JLabel scorePlayer;
     private JPanel drawGame;
     private Board board;
 
@@ -26,7 +26,7 @@ public class Game extends JFrame {
         scoreGame.setMinimumSize(new Dimension(900, 100));
         drawGame.setMinimumSize(new Dimension(900, 800));
 
-        board = new Board(this,8, 900, 800, 0.3);
+        board = new Board(this,8, 900, 800, 0.6);
         drawGame.setLayout(new BorderLayout());
         drawGame.add(board, BorderLayout.CENTER);
         drawGame.setBackground(new Color(255, 236, 194));

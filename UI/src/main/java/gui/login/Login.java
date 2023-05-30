@@ -1,6 +1,6 @@
 package gui.login;
 
-import application.User;
+import dao.User;
 import dao.DAOConnection;
 import dao.DAOUsers;
 import gui.game.Menu;

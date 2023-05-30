@@ -1,8 +1,8 @@
 package application;
 
 import dao.DAOConnection;
+import dao.User;
 import gui.login.Login;
-import gui.register.Register;
 
 /**
  * Hello world!

@@ -1,6 +1,6 @@
 package gui.register;
 
-import application.User;
+import dao.User;
 import dao.DAOConnection;
 import dao.DAOUsers;
 import gui.login.Login;

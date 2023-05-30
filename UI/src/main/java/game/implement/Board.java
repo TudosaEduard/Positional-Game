@@ -27,6 +27,12 @@ public class Board extends JPanel {
     Graphics2D graphics;
     BufferedImage image;
     int playerTurn = 1;
+    Ai ai = new Ai();
+    int scorePlayer1 = 1000;
+    int scorePlayer2 = 1000;
+
+    int nrEdgesPlayer1 = 0;
+    int nrEdgesPlayer2 = 0;
 
     public Board(Game game, int numVertices, int W, int H, double probability) {
         this.game = game;
@@ -45,6 +51,7 @@ public class Board extends JPanel {
         createVertices();
         drawLines();
         drawVertices();
+        ai.giveEdges(edges);
         selectNodes();
         repaint();
     }
@@ -145,22 +152,75 @@ public class Board extends JPanel {
                             graphics.fillOval(v.getX() - 6, v.getY() - 6, 12, 12);
 
                             String color = playerTurn == 1 ? "#ff0000" : "#0000ff";
-                            //modify text for scorePlayer JLabel
 
                             graphics.setColor(Color.decode(color));
                             graphics.drawLine(node1.getX(), node1.getY(), node2.getX(), node2.getY());
                             repaint();
 
+                            for (Edge e1 : edges) {
+                                if (e1.getNode1().equals(node1.getNode()) && e1.getNode2().equals(node2.getNode()) ||
+                                        e1.getNode1().equals(node2.getNode()) && e1.getNode2().equals(node1.getNode())) {
+                                    e1.setColor(color);
+                                }
+                            }
+
                             edge = node1.getNode().getName() + " " + node2.getNode().getName();
+
+                            if(playerTurn == 1 || ai.getStartAi() == 1)
+                            {
+                                nrEdgesPlayer1++;
+                                scorePlayer1 -= 50;
+                                System.out.println("Player 1 : " + scorePlayer1 + " " + nrEdgesPlayer1);
+                            }
+                            else
+                            {
+                                nrEdgesPlayer2++;
+                                scorePlayer2 -= 50;
+                                System.out.println("Player 2 : " + scorePlayer2 + " " + nrEdgesPlayer2);
+                            }
+
+                            if(winCondition())
+                            {
+                                if(playerTurn == 1)
+                                {
+                                    JOptionPane.showMessageDialog(null, "Player 1 wins!");
+                                    System.exit(0);
+                                }
+                                else
+                                {
+                                    JOptionPane.showMessageDialog(null, "Player 2 wins!");
+                                    System.exit(0);
+                                }
+                            } else if(nrEdgesPlayer1 + nrEdgesPlayer2 == edges.size())
+                            {
+                                if(scorePlayer1 > scorePlayer2)
+                                {
+                                    JOptionPane.showMessageDialog(null, "Player 1 wins!");
+                                    System.exit(0);
+                                }
+                                else if(scorePlayer1 < scorePlayer2)
+                                {
+                                    JOptionPane.showMessageDialog(null, "Player 2 wins!");
+                                    System.exit(0);
+                                }
+                                else
+                                {
+                                    JOptionPane.showMessageDialog(null, "Draw!");
+                                    System.exit(0);
+                                }
+                            }
+
                             playerTurn = playerTurn == 1 ? 2 : 1;
 
-                            if(playerTurn == 1)
+                            if(playerTurn == 1 || ai.getStartAi() == 1)
                             {
                                 game.playerRound.setText("Player 1");
+                                game.scorePlayer.setText("Score : " + scorePlayer1);
                             }
                             else
                             {
                                 game.playerRound.setText("Player 2");
+                                game.scorePlayer.setText("Score : " + scorePlayer2);
                             }
 
                         } else {
@@ -177,6 +237,42 @@ public class Board extends JPanel {
                             graphics.setColor(Color.WHITE);
                             graphics.fillOval(node1.getX() - 6, node1.getY() - 6, 12, 12);
                             graphics.fillOval(node2.getX() - 6, node2.getY() - 6, 12, 12);
+                            if(ai.getStartAi() == 1){
+                                playerTurn = playerTurn == 1 ? 2 : 1;
+                                System.out.println("Player turn: " + playerTurn);
+                                ai.removeTriangle(node1.getNode(), node2.getNode());
+                                if(ai.isUnwinnable())
+                                {
+                                    JOptionPane.showMessageDialog(null, "You win!");
+                                    System.exit(0);
+                                }
+                                List<Node> bestEdge = ai.getBestEdge();
+                                for (Vertex vert : vertices) {
+                                    if (vert.getNode().equals(bestEdge.get(0))) {
+                                        node1 = vert;
+                                    }
+                                    if (vert.getNode().equals(bestEdge.get(1))) {
+                                        node2 = vert;
+                                    }
+                                }
+                                graphics.setColor(Color.BLUE);
+                                graphics.drawLine(node1.getX(), node1.getY(), node2.getX(), node2.getY());
+                                repaint();
+
+                                for (Edge e1 : edges) {
+                                    if (e1.getNode1().equals(node1.getNode()) && e1.getNode2().equals(node2.getNode()) ||
+                                            e1.getNode1().equals(node2.getNode()) && e1.getNode2().equals(node1.getNode())) {
+                                        e1.setColor("blue");
+                                    }
+                                }
+
+                                if(winCondition())
+                                {
+                                    JOptionPane.showMessageDialog(null, "You lose!");
+                                    System.exit(0);
+
+                                }
+                            }
                             repaint();
                             node1 = null;
                             node2 = null;
@@ -197,4 +293,31 @@ public class Board extends JPanel {
         }
         return false;
     }
+
+    public Boolean winCondition(){
+        //print edges
+        for (Edge e : edges) {
+            System.out.println(e.getNode1().getName() + " " + e.getNode2().getName() + " " + e.getColor());
+        }
+        for(Edge e1 : edges){
+            for(Edge e2 : edges){
+                for(Edge e3 : edges){
+                    if(e1.equals(e2) || e1.equals(e3) || e2.equals(e3))
+                        continue;
+                    if(e1.getNode1() == null || e1.getNode2() == null || e2.getNode1() == null || e2.getNode2() == null || e3.getNode1() == null || e3.getNode2() == null)
+                        continue;
+                    if(e1.getNode1().equals(e2.getNode1()) && e1.getNode2().equals(e3.getNode1()) && e2.getNode2().equals(e3.getNode2()) ||
+                            e1.getNode1().equals(e2.getNode2()) && e1.getNode2().equals(e3.getNode1()) && e2.getNode1().equals(e3.getNode2()) ||
+                            e1.getNode1().equals(e2.getNode1()) && e1.getNode2().equals(e3.getNode2()) && e2.getNode2().equals(e3.getNode1()) ||
+                            e1.getNode1().equals(e2.getNode2()) && e1.getNode2().equals(e3.getNode2()) && e2.getNode1().equals(e3.getNode1()))
+                    {
+                        if(e1.getColor().equals(e2.getColor()) && e1.getColor().equals(e3.getColor()) && e2.getColor().equals(e3.getColor()) && !e1.getColor().equals("black"))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
+
