@@ -71,6 +71,14 @@ public class Register extends JFrame{
             user = addNewUserToDatabase(username, password1, email);
             if(user != null){
                 dispose();
+                Login login = new Login(null);
+                User user = login.user;
+
+                if(user != null){
+                    System.out.println("Successfully logged in of: " + user.getUsername() + " !");
+                } else {
+                    System.out.println("Login canceled!");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to create a new user! Username, email or password are invalid!", "Try again", JOptionPane.ERROR_MESSAGE);
             }
